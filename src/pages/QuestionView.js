@@ -1,11 +1,21 @@
 import React from 'react';
 import './QuestionView.css';
-import FakeData from '../dummy/db.json';
+import database from '../dummy/db.json';
+import Question from '../components/Question';
+import updateQuestions from '../data/updateQuestions';
 
 class QuestionView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {questions: []};
+    this.state = { questions: [] };
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    this.setState({ questions: database.questions });
   }
 
   render() {
@@ -13,20 +23,16 @@ class QuestionView extends React.Component {
     return (
       <section>
         <ol className="QuestionView-list">
-          {questions.map(question =>
-            <li>{question.question}</li>
-          )}
+          {questions.map(question => (
+            <Question onValueChange={this.onValueChange.bind(this)} key={question.id} {...question} />
+          ))}
         </ol>
       </section>
     );
   }
 
-  fetchData() {
-    this.setState({questions: FakeData.questions});
-  }
-
-  componentDidMount() {
-    this.fetchData()
+  onValueChange = (id) => ({ target: { value } }) => {
+    this.setState(state => updateQuestions(state, id, value));
   }
 }
 
